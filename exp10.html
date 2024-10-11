@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Banking Application Development</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        /* Basic page styling */
+        body { font-family: Arial, sans-serif; }
+        .chart { width: 100%; height: 400px; margin-bottom: 50px; }
+        h1, h2 { text-align: center; }
+        svg { font-family: Arial, sans-serif; }
+        .tooltip {
+            position: absolute;
+            background: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ccc;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cognitive Banking Application Development Steps</h1>
+
+    <!-- Divs for Google Charts -->
+    <h2>Data Collection</h2>
+    <div id="data-collection-chart" class="chart"></div>
+
+    <h2>Data Preprocessing</h2>
+    <div id="data-preprocessing-chart" class="chart"></div>
+
+    
+
+    <!-- Div for D3.js Chart -->
+    <h2>Model Training Progress</h2>
+    <div id="model-training-chart" class="chart"></div>
+
+    <!-- Div for Radar Chart -->
+    <h2>Model Evaluation Metrics</h2>
+    <div id="model-evaluation-chart" class="chart"></div>
+
+    <!-- Google Charts Data Collection Pie Chart -->
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawDataCollectionChart);
+
+        function drawDataCollectionChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Source', 'Percentage'],
+            ['Customer Transactions', 45],
+            ['Loan Applications', 25],
+            ['Customer Feedback', 15],
+            ['External Market Data', 10],
+            ['Social Media', 5]
+          ]);
+
+          var options = {
+            title: 'Data Collection Sources in Banking Cognitive App',
+            is3D: true
+          };
+
+          var chart = new google.visualization.PieChart(document.getElementById('data-collection-chart'));
+          chart.draw(data, options);
+        }
+    </script>
+
+    <!-- Google Charts Data Preprocessing Bar Chart -->
+    <script type="text/javascript">
+        google.charts.setOnLoadCallback(drawPreprocessingChart);
+
+        function drawPreprocessingChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Preprocessing Step', 'Time Spent (%)'],
+            ['Data Cleaning', 40],
+            ['Feature Engineering', 30],
+            ['Normalization', 20],
+            ['Anonymization', 10]
+          ]);
+
+          var options = {
+            title: 'Data Preprocessing in Banking Cognitive App',
+            hAxis: {title: 'Steps'},
+            vAxis: {title: 'Time Spent (%)'},
+            legend: {position: 'none'}
+          };
+
+          var chart = new google.visualization.ColumnChart(document.getElementById('data-preprocessing-chart'));
+          chart.draw(data, options);
+        }
+    </script>
+
+    <!-- D3.js Model Training Line Chart -->
+    <script>
+        var dataset = [
+            {iteration: 1, accuracy: 0.72},
+            {iteration: 2, accuracy: 0.79},
+            {iteration: 3, accuracy: 0.85},
+            {iteration: 4, accuracy: 0.88},
+            {iteration: 5, accuracy: 0.90}
+        ];
+
+        var svgWidth = 600, svgHeight = 400, margin = {top: 30, right: 30, bottom: 50, left: 50};
+        var width = svgWidth - margin.left - margin.right;
+        var height = svgHeight - margin.top - margin.bottom;
+
+        var svg = d3.select('#model-training-chart')
+                    .append('svg')
+                    .attr('width', svgWidth)
+                    .attr('height', svgHeight)
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        var x = d3.scaleLinear().domain([1, 5]).range([0, width]);
+        var y = d3.scaleLinear().domain([0.7, 1]).range([height, 0]);
+
+        svg.append('g')
+           .attr('transform', 'translate(0,' + height + ')')
+           .call(d3.axisBottom(x).ticks(5));
+
+        svg.append('g')
+           .call(d3.axisLeft(y));
+
+        var line = d3.line()
+                     .x(d => x(d.iteration))
+                     .y(d => y(d.accuracy));
+
+        svg.append('path')
+           .datum(dataset)
+           .attr('fill', 'none')
+           .attr('stroke', 'steelblue')
+           .attr('stroke-width', 2)
+           .attr('d', line);
+
+        svg.selectAll('dot')
+           .data(dataset)
+           .enter().append('circle')
+           .attr('cx', d => x(d.iteration))
+           .attr('cy', d => y(d.accuracy))
+           .attr('r', 5)
+           .attr('fill', 'red');
+
+        // Tooltip for D3.js Chart
+        var tooltip = d3.select('body').append('div')
+            .attr('class', 'tooltip');
+
+        svg.selectAll('circle')
+           .on('mouseover', function(event, d) {
+               tooltip.html('Iteration: ' + d.iteration + '<br>Accuracy: ' + d.accuracy)
+                      .style('visibility', 'visible');
+           })
+           .on('mousemove', function(event) {
+               tooltip.style('top', (event.pageY - 10) + 'px')
+                      .style('left', (event.pageX + 10) + 'px');
+           })
+           .on('mouseout', function() {
+               tooltip.style('visibility', 'hidden');
+           });
+    </script>
+
+<script type="text/javascript">
+  google.charts.load('current', {packages:['corechart']});
+  google.charts.setOnLoadCallback(drawEvaluationChart);
+
+  function drawEvaluationChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Metric', 'Precision', 'Recall', 'F1-Score'],
+      ['SVM', 0.85, 0.75, 0.80],
+      ['Decision Tree', 0.88, 0.78, 0.83],
+      ['Random  Forest', 0.90, 0.82, 0.86]
+    ]);
+
+    var options = {
+      title: 'Model Evaluation Metrics',
+      radar: {radius: 100},
+      hAxis: {title: 'Metrics'},
+      vAxis: {title: 'Score'}
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('model-evaluation-chart'));
+    chart.draw(data, options);
+  }
+</script>
+</body>
+</html>
